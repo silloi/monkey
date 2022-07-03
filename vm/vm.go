@@ -53,6 +53,18 @@ func (vm *VM) Run() error {
 
 		case code.OpPop:
 			vm.pop()
+
+		case code.OpTrue:
+			err := vm.push(True)
+			if err != nil {
+				return err
+			}
+
+		case code.OpFalse:
+			err := vm.push(False)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -116,3 +128,6 @@ func (vm *VM) executeBinaryIntegerOperation(
 
 	return vm.push(&object.Integer{Value: result})
 }
+
+var True = &object.Boolean{Value: true}
+var False = &object.Boolean{Value: false}
