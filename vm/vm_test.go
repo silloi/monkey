@@ -397,12 +397,12 @@ func TestFirstClassFunctions(t *testing.T) {
 		},
 		{
 			input: `
-								 let returnsOneReturner = fn() {
-										 let returnsOne = fn() { 1; };
-										 returnsOne;
-								 };
-								 returnsOneReturner()();
-								 `,
+		let returnsOneReturner = fn() {
+			let returnsOne = fn() { 1; };
+			returnsOne;
+		};
+		returnsOneReturner()();
+		`,
 			expected: 1,
 		},
 	}
