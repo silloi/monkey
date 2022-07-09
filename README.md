@@ -28,7 +28,29 @@
   - [x] strings
   - [x] arrays
   - [x] hashes
+- [x] bytecode compiler
+- [x] virtual machine
 
-### Writing An Interpreter In Go
+### Eval
+
+```sh
+go run main.go
+```
+
+### VM
+
+```sh
+go build -o monkey . && ./monkey
+```
+
+### Benchmark
+
+```sh
+go build -o fibonacci ./benchmark
+./fibonacci -engine=eval
+./fibonacci -engine=vm
+```
+
+## Writing An Interpreter In Go
 
 Go there and buy this now: https://interpreterbook.com/
