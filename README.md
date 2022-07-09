@@ -20,7 +20,8 @@
 - [x] application of those functions
 - [x] conditionals
 - [x] return statements
-- [x] higher-order functions and closures
+- [x] higher-order functions
+- [x] closures
 - [x] data types
   - [x] integers
   - [x] booleans

@@ -558,7 +558,8 @@ func TestIndexExpressions(t *testing.T) {
 func TestFunctions(t *testing.T) {
 	tests := []compilerTestCase{
 		{
-			input: `fn() { return 5 + 10 }`, expectedConstants: []interface{}{
+			input: `fn() { return 5 + 10 }`,
+			expectedConstants: []interface{}{
 				5,
 				10,
 				[]code.Instructions{
@@ -569,12 +570,13 @@ func TestFunctions(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 2),
+				code.Make(code.OpClosure, 2, 0),
 				code.Make(code.OpPop),
 			},
 		},
 		{
-			input: `fn() { 5 + 10 }`, expectedConstants: []interface{}{
+			input: `fn() { 5 + 10 }`,
+			expectedConstants: []interface{}{
 				5,
 				10,
 				[]code.Instructions{
@@ -585,12 +587,13 @@ func TestFunctions(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 2),
+				code.Make(code.OpClosure, 2, 0),
 				code.Make(code.OpPop),
 			},
 		},
 		{
-			input: `fn() { 1; 2 }`, expectedConstants: []interface{}{
+			input: `fn() { 1; 2 }`,
+			expectedConstants: []interface{}{
 				1,
 				2,
 				[]code.Instructions{
@@ -601,10 +604,27 @@ func TestFunctions(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 2),
+				code.Make(code.OpClosure, 2, 0),
 				code.Make(code.OpPop),
 			},
 		},
+	}
+
+	runCompilerTests(t, tests)
+}
+
+func TestFunctionsWithoutReturnValue(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `fn() { }`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpReturn),
+				}},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 0, 0),
+				code.Make(code.OpPop),
+			}},
 	}
 
 	runCompilerTests(t, tests)
@@ -686,7 +706,7 @@ func TestFunctionCalls(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 1), // The compiled function
+				code.Make(code.OpClosure, 1, 0), // The compiled function
 				code.Make(code.OpCall, 0),
 				code.Make(code.OpPop),
 			},
@@ -704,7 +724,7 @@ func TestFunctionCalls(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 1), // The compiled function
+				code.Make(code.OpClosure, 1, 0), // The compiled function
 				code.Make(code.OpSetGlobal, 0),
 				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpCall, 0),
@@ -724,7 +744,7 @@ func TestFunctionCalls(t *testing.T) {
 				24,
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 0),
+				code.Make(code.OpClosure, 0, 0),
 				code.Make(code.OpSetGlobal, 0),
 				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpConstant, 1),
@@ -735,7 +755,7 @@ func TestFunctionCalls(t *testing.T) {
 		{
 			input: `
 			let manyArg = fn(a, b, c) { a; b; c };
-			manyArg(24, 25, 26);
+			manyArg(1, 2, 3);
 			`,
 			expectedConstants: []interface{}{
 				[]code.Instructions{
@@ -746,12 +766,12 @@ func TestFunctionCalls(t *testing.T) {
 					code.Make(code.OpGetLocal, 2),
 					code.Make(code.OpReturnValue),
 				},
-				24,
-				25,
-				26,
+				1,
+				2,
+				3,
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 0),
+				code.Make(code.OpClosure, 0, 0),
 				code.Make(code.OpSetGlobal, 0),
 				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpConstant, 1),
@@ -783,7 +803,7 @@ func TestLetStatementScopes(t *testing.T) {
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpSetGlobal, 0),
-				code.Make(code.OpConstant, 1),
+				code.Make(code.OpClosure, 1, 0),
 				code.Make(code.OpPop),
 			}},
 		{
@@ -802,7 +822,7 @@ func TestLetStatementScopes(t *testing.T) {
 					code.Make(code.OpReturnValue),
 				}},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 1),
+				code.Make(code.OpClosure, 1, 0),
 				code.Make(code.OpPop),
 			}},
 		{
@@ -827,7 +847,7 @@ func TestLetStatementScopes(t *testing.T) {
 					code.Make(code.OpReturnValue),
 				}},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 2),
+				code.Make(code.OpClosure, 2, 0),
 				code.Make(code.OpPop),
 			}},
 	}
@@ -866,7 +886,7 @@ func TestBuiltins(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.OpConstant, 0),
+				code.Make(code.OpClosure, 0, 0),
 				code.Make(code.OpPop),
 			},
 		},
